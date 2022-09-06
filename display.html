@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: sans-serif;
+            background-color: #fbfbfb;
+        }
+
+        .container {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #messages {
+            color: #ccc;
+            margin: 20px;
+            padding: 0;
+            height: 100%;
+            font-size: 32px;
+        }
+
+        #messages::first-line {
+            color: #222;
+            font-size: 64px;
+
+        }
+
+        #qrcode {
+            width: 200px;
+            height: 200px;
+        }
+
+        .clear {
+            background-color: transparent;
+            border: none;
+            color: #ccc;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+
+        .clear:hover {
+            color: #222;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="qrcode"></div>
+    </div>
+
+    <div id="actions">
+        <button class="clear">clear</button>
+    </div>
+
+    <div id="messages">
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="jquery.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var uuid = create_UUID();
+            var socket = io();
+            socket.emit('display', 'join#' + uuid);
+
+            socket.on('pad', function (msg) {
+                console.log(msg);
+                $(".container").remove();
+            });
+
+            var messages = document.getElementById('messages');
+            var status = document.getElementById('status');
+
+            socket.on('chat', function (msg) {
+                console.log(msg);
+                messages.innerText = msg + "\n" + messages.innerText;
+            });
+
+            $("button.clear").click(function (event) {
+                messages.innerHTML = ''
+            });
+
+            $("#qrcode").html("");
+
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: window.location.href + "pad?join=" + uuid,
+                width: 200,
+                height: 200,
+                colorDark: "#2f2f2f",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            function create_UUID() {
+                var dt = new Date().getTime();
+                var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = (dt + Math.random() * 16) % 16 | 0;
+                    dt = Math.floor(dt / 16);
+                    return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+                });
+                return uuid;
+            }
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "tesla-pad",
+  "version": "1.0.0",
+  "description": "a simple socket.io implementation for a real time notepad on Tesla web browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Antonio Lorè",
+  "license": "GPL",
+  "dependencies": {
+    "express": "^4.18.1",
+    "socket.io": "^4.5.2"
+  }
+}

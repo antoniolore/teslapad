@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TeslaPad - Notepad for Tesla</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <style>
+        body {
+            background-color: #fbfbfb;
+            color: #222;
+            width: 80%;
+            margin: 0 auto;
+            display: block;
+            height: 100%;
+            font-size: 64px;
+            padding: 80px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<html contenteditable>
+
+<body></body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        var socket = io();
+
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+
+        let channgelToJoin = params.join;
+        console.log(channgelToJoin)
+        socket.emit('pad', 'join#' + channgelToJoin);
+
+        var txt = document.getElementsByTagName('body')[0]
+        setTimeout(function() {
+            txt.focus();
+        }, 0);
+
+        const hours = new Date().getHours()
+
+        document.addEventListener('keydown', (event) => {
+            if (event.keyCode == 13) {
+                if (txt.innerText.trim().length  > 0) {
+                    socket.emit('chat', txt.innerText.trim());
+                }
+
+                txt.innerText = '';
+            }
+
+        })
+    });
+</script>
+
+</html>
